@@ -15,12 +15,6 @@ struct Node
 	Node(std::vector<float> arr, int setId)
 	:	point(arr), id(setId), left(NULL), right(NULL)
 	{}
-
-	~Node()
-	{
-		delete left;
-		delete right;
-	}
 };
 
 struct KdTree
@@ -31,23 +25,70 @@ struct KdTree
 	: root(NULL)
 	{}
 
-	~KdTree()
-	{
-		delete root;
-	}
-
 	void insert(std::vector<float> point, int id)
 	{
-		// TODO: Fill in this function to insert a new point into the tree
+		// insert a new point into the tree
 		// the function should create a new node and place correctly with in the root 
-
+		insertHelper(&root, 0, point, id);
 	}
 
+	void insertHelper(Node **node, int depth, std::vector<float> point, int id){
+		// Use point size considering data consistency over its dimension
+		int coord_id = depth % point.size();
+
+		if(*node == NULL){
+			*node = new Node(point, id);
+		}
+		else{
+          if (point[coord_id] > (*node)->point[coord_id]){
+              insertHelper(&((*node)->right), depth + 1, point, id);
+          }
+          else{
+              insertHelper(&((*node)->left), depth + 1, point, id);
+          }
+        }
+	}
 	// return a list of point ids in the tree that are within distance of target
 	std::vector<int> search(std::vector<float> target, float distanceTol)
 	{
 		std::vector<int> ids;
+		searchHelper(target, root, distanceTol, 0, ids);
 		return ids;
+	}
+
+	void searchHelper(std::vector<float> target, Node* node, float distanceTol, int depth, std::vector<int> &ids)
+	{
+		int coord_id = depth % root->point.size();
+		if (node != NULL){
+          	if (target.size() == 2){ 
+              if (((node->point[0] <= target[0] + distanceTol) && (node->point[0] >= target[0] - distanceTol)) && 
+                  ((node->point[1] <= target[1] + distanceTol) && (node->point[1] >= target[1] - distanceTol))) {
+
+                  float d = sqrt((node->point[0] - target[0])*(node->point[0] - target[0]) +  (node->point[1] - target[1])*(node->point[1] - target[1]));
+                  if (d <= distanceTol){
+                      ids.push_back(node->id);
+                  }
+              }
+            }
+          	else if (target.size() == 3){
+            	if (((node->point[0] <= target[0] + distanceTol) && (node->point[0] >= target[0] - distanceTol)) && 
+                    ((node->point[1] <= target[1] + distanceTol) && (node->point[1] >= target[1] - distanceTol)) &&
+                   	((node->point[2] <= target[2] + distanceTol) && (node->point[2] >= target[2] - distanceTol))) {
+
+                    float d = sqrt((node->point[0] - target[0])*(node->point[0] - target[0]) +  (node->point[1] - target[1])*(node->point[1] - target[1])
+                                  + (node->point[2] - target[2])*(node->point[2] - target[2]));
+                    if (d <= distanceTol){
+                        ids.push_back(node->id);
+                    }
+                }
+            }
+			if ((target[coord_id] - distanceTol) < node->point[coord_id]){
+				searchHelper(target, node->left, distanceTol, depth+1, ids);
+			}
+          	if ((target[coord_id] + distanceTol) > node->point[coord_id]){
+				searchHelper(target, node->right, distanceTol, depth+1, ids);
+			}
+		}
 	}
 	
 
