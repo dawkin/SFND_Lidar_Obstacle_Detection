@@ -57,7 +57,7 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
   	std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segmentCloud = pointProcessor.SegmentPlane(inputCloud, 100, 0.2);
   	// Display road and obstacles in different colors
   	//renderPointCloud(viewer,segmentCloud.first,"obstCloud",Color(1,0,0));
-	//renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
+	  //renderPointCloud(viewer,segmentCloud.second,"planeCloud",Color(0,1,0));
   	
   	// Cluster every obstacle
   	std::vector<pcl::PointCloud<pcl::PointXYZ>::Ptr> cloudClusters = pointProcessor.Clustering(segmentCloud.first, 1.5, 3, 30);
@@ -71,7 +71,7 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
           pointProcessor.numPoints(cluster);
           renderPointCloud(viewer,cluster,"obstCloud"+std::to_string(clusterId),colors[clusterId % colors.size()]);
       	  Box box = pointProcessor.BoundingBox(cluster);
-		  renderBox(viewer,box,clusterId);
+		      renderBox(viewer,box,clusterId);
           ++clusterId;
     }
 }
@@ -99,7 +99,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
   	// Segment road plane and obstacle form pcl
   	std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segmented_cloud = pointProcessorI->SegmentPlane(filtered_cloud, 50, 0.2);
   	//renderPointCloud(viewer,segmented_cloud.first,"obstCloud",Color(1,0,0));
-	renderPointCloud(viewer,segmented_cloud.second,"planeCloud",Color(0,1,0));
+	  renderPointCloud(viewer,segmented_cloud.second,"planeCloud",Color(0,1,0));
   	
   	// clustering apply to the obstacle point cloud
   	std::vector<pcl::PointCloud<pcl::PointXYZI>::Ptr> cloudClusters = pointProcessorI->Clustering(segmented_cloud.first, 0.5, 5, 500);
@@ -113,7 +113,7 @@ void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointCloud
           pointProcessorI->numPoints(cluster);
           renderPointCloud(viewer,cluster,"obstCloud"+std::to_string(clusterId),colors[clusterId % colors.size()]);
       	  Box box = pointProcessorI->BoundingBox(cluster);
-		  renderBox(viewer,box,clusterId);
+		      renderBox(viewer,box,clusterId);
           ++clusterId;
     }
   
