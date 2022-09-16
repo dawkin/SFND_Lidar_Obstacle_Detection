@@ -65,14 +65,15 @@ struct KdTree
 			for (size_t i = 0; i < target.size(); i++) { 
 				check &= std::abs(node->point[i] - target[i]) <= distanceTol; 
 			}
-			
-			float distance = 0.f;
-			for (size_t i = 0; i < target.size(); i++) {
-				distance += (target[i] - node->point[i]) * (target[i] - node->point[i]);
-			} 
-			distance = sqrt(distance);
-			if (distance <= distanceTol){
-                ids.push_back(node->id);
+			if (check){
+                float distance = 0.f;
+                for (size_t i = 0; i < target.size(); i++) {
+                    distance += (target[i] - node->point[i]) * (target[i] - node->point[i]);
+                } 
+                distance = sqrt(distance);
+                if (distance <= distanceTol){
+                    ids.push_back(node->id);
+                }
             }
           	
 			if ((target[coord_id] - distanceTol) < node->point[coord_id]){
@@ -86,7 +87,3 @@ struct KdTree
 	
 
 };
-
-
-
-
